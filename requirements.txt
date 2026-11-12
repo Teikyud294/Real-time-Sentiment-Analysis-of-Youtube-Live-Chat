@@ -1,0 +1,14 @@
+pyspark==3.5.6
+kafka-python==2.2.15
+scikit-learn==1.7.2
+pandas==2.2.3
+numpy==1.26.4
+matplotlib==3.11.2
+seaborn==0.13.2
+joblib==1.5.2
+streamlit==1.50.0
+plotly==6.3.0
+pyarrow==21.0.0
+python-dotenv==1.1.1
+pytest==8.4.2
+pytchat==0.5.5

@@ -1,0 +1,14 @@
+.env*
+!.env.example
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
+checkpoints/
+output/
+data/raw/
+*.parquet
+*.log
+.vscode/
