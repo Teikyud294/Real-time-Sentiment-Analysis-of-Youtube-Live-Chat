@@ -12,3 +12,4 @@ data/raw/
 *.parquet
 *.log
 .vscode/
+.idea/

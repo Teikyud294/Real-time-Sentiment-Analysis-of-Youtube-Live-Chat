@@ -1,3 +1,4 @@
+# Python version: >=3.10, <=3.11 (Khuyến nghị: Python 3.11 để tương thích tốt nhất với PySpark 3.5 và NumPy 1.26)
 pyspark==3.5.6
 kafka-python==2.2.15
 scikit-learn==1.7.2
