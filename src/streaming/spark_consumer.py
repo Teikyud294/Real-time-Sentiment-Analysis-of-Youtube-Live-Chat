@@ -1,10 +1,11 @@
 import os
+import sys
 import time
 from dotenv import load_dotenv
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, from_json
-from preProcessing import preProcess_Messages
-from schema import SCHEMA
+from src.streaming.preProcessing import preProcess_Messages
+from src.schemas.schema import SPARK_SCHEMA
 
 
 load_dotenv()
@@ -14,9 +15,12 @@ KAFKA_BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS")
 TOPIC_NAME = os.getenv("TOPIC_NAME")
 TARGET_RATE = 100
 OUTPUT_PARQUET_PATH="output/parquet"
+DOMAIN = os.getenv("CHAT_DOMAIN", "ESPORTS")
 
 
 def create_Spark():
+    os.environ["PYSPARK_PYTHON"] = sys.executable
+    os.environ["PYSPARK_DRIVER_PYTHON"] = sys.executable
     spark = (
         SparkSession.builder
         .appName("YoutubeLiveChat-Sentiment")
@@ -53,7 +57,7 @@ def parse_JSON(DF):
     )
 
     parseDF = (
-        jsonDF.withColumn("data", from_json(col("raw_message"), SCHEMA))
+        jsonDF.withColumn("data", from_json(col("raw_message"), SPARK_SCHEMA))
             .select(
                 "data.*",
                 "kafka_timestamp",
@@ -61,7 +65,6 @@ def parse_JSON(DF):
                 "partition",
                 "offset"
             )
-            .withColumnRenamed("text", "message")
     )
 
     return parseDF
@@ -74,11 +77,17 @@ def process_Batch(DF, ID):
     if totalCount == 0:
         return
 
-    validDF = preProcess_Messages(DF)
+    validDF = preProcess_Messages(DF, domain=DOMAIN)
     validCount = validDF.count()
     invalidCount = totalCount - validCount
 
     if validCount > 0:
+        print("\n===== PREPROCESSING RESULT =====")
+        validDF.select(
+            col("message_id"),
+            col("message").alias("raw_message"),
+            col("clean_message"),
+        ).show(truncate=False)
         validDF.write.mode("append").parquet(OUTPUT_PARQUET_PATH)
 
     elapsed = time.perf_counter() - startTime
