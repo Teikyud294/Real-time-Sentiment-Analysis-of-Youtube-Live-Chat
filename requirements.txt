@@ -12,3 +12,6 @@ pyarrow==21.0.0
 python-dotenv==1.1.1
 pytest==8.4.2
 pytchat==0.5.5
+PyYAML==6.0.3
+emoji==2.15.0
+regex==2026.11.19

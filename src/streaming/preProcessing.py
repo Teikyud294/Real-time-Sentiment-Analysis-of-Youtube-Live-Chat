@@ -1,5 +1,7 @@
 from pyspark.sql import DataFrame
-from pyspark.sql.functions import col, trim, regexp_replace, length, lower, to_timestamp
+from pyspark.sql.functions import col, trim, to_timestamp
+
+from src.streaming.preprocessing_adapter import normalize_spark_dataframe
 
 
 # KIỂM TRA DỮ LIỆU HỢP LỆ?
@@ -11,10 +13,9 @@ def validate_Messages(DF: DataFrame) -> DataFrame:
 
 
 # LÀM SẠCH VĂN BẢN
-def clean_Messages(DF: DataFrame) -> DataFrame:
+def clean_Messages(DF: DataFrame, domain: str = "ESPORTS") -> DataFrame:
     DF = DF.withColumn("message", trim(col("message")))
-    DF = DF.withColumn("message", regexp_replace(col("message"), r"\s+", " "))
-    DF = DF.withColumn("message", lower(col("message")))
+    DF = normalize_spark_dataframe(DF, domain=domain, message_column="message")
 
     return DF
 
@@ -33,9 +34,9 @@ def convert_Timestamps(DF):
 
 
 # HÀM TỔNG HỢP ĐỂ IMPORT
-def preProcess_Messages(DF: DataFrame) -> DataFrame:
+def preProcess_Messages(DF: DataFrame, domain: str = "ESPORTS") -> DataFrame:
     DF = validate_Messages(DF)
-    DF = clean_Messages(DF)
+    DF = clean_Messages(DF, domain=domain)
     DF = convert_Timestamps(DF)
 
     return DF
