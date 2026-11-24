@@ -16,3 +16,12 @@ pytchat==0.5.5
 PyYAML==6.0.3
 emoji==2.15.0
 regex==2026.11.19
+
+# Fine-tune Transformer. Baseline chỉ dùng các gói ở trên.
+torch>=2.6,<3
+transformers>=4.57.1,<6
+datasets>=3,<6
+accelerate>=1.1,<2
+sentencepiece>=0.2,<1
+protobuf>=4,<8
+pyvi==0.1.1
